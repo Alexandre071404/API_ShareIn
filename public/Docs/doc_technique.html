@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation Technique - Share'In</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background-color: #09aecb;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+        main {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1, h2, li a {
+            color: #09aecb;
+        }
+        h3 {
+            color: #333;
+        }
+        ul, ol {
+            margin-left: 20px;
+        }
+        code {
+            background-color: #eee;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: "Courier New", Courier, monospace;
+        }
+        .code-block {
+            background-color: #272822;
+            color: #f8f8f2;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        .btn-back {
+            display: inline-block;
+            padding: 10px 15px;
+            margin-top: 20px;
+            background-color: #09aecb;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn-back:hover {
+            background-color: #005fa3;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    🛠️ Documentation Technique - Share'In
+</header>
+
+<main>
+    <h1>Introduction</h1>
+    <p>Ce document décrit l'architecture et les composants techniques de Share'In, une application de visioconférence avec carte interactive.</p>
+
+    <h2>📌 Table des Matières</h2>
+    <ul>
+        <li><a href="#technologies">Technologies Utilisées</a></li>
+        <li><a href="#architecture">Architecture de l'Application</a></li>
+        <li><a href="#backend">Backend</a></li>
+        <li><a href="#frontend">Frontend</a></li>
+        <li><a href="#communication">Communication Temps Réel</a></li>
+        <li><a href="#geolocalisation">Géolocalisation</a></li>
+    </ul>
+
+    <h2 id="technologies">🖥️ Technologies Utilisées</h2>
+    <ul>
+        <li><strong>Frontend :</strong> HTML, CSS, JavaScript</li>
+        <li><strong>Backend & API :</strong> Node.js</li>
+        <li><strong>Temps réel :</strong> WebRTC, Socket.io</li>
+        <li><strong>Carte interactive :</strong> Leaflet.js, OpenStreetMap</li>
+    </ul>
+
+    <h2 id="architecture">🏗️ Architecture de l'Application</h2>
+    <p>Share'In est basé sur une architecture client-serveur :</p>
+    <ul>
+        <li>Le **Frontend** gère l'affichage des appels et de la carte.</li>
+        <li>Le **Backend** gère la signalisation WebRTC et les connexions WebSocket.</li>
+        <li>Les **Sockets** permettent la communication temps réel.</li>
+        <li>Leaflet.js est utilisé pour afficher la carte interactive.</li>
+    </ul>
+    <p>Share'In a basé son arborescence de la manière suivante :</p>
+    <div class="code-block">
+        📂 ShareIn/
+        ├── 📁 node_modules/          # Dossier contenant l'ensemble des éléments node
+        ├── 📁 public/
+        │   ├── 📁 asset/            
+        │   │   ├── 📁 asset/        
+        │   │   │   ├── 📄 Logo.png       # Logo Share'In
+        │   ├── 📁 js/               
+        │   │   ├── 📄 login.js       # Point d'entrée de l'application 
+        │   │   ├── 📄 app.js         # Gère la liste des users et le démarage du socket
+        │   │   ├── 📄 WebRTC.js      # Gestion de la Visio-conférence
+        │   │   ├── 📄 chat.js        # Gestion du chat privé
+        │   │   ├── 📄 map.js         # Gestion de la carte intéractive
+        │   │
+        │   ├── 📁 Docs/                  # Documentation utilisateur et technique
+        │   │   ├── 📄 doc_utilisateur.html
+        │   │   ├── 📄 doc_technique.html
+        │   │
+        │   ├── 📁 style/                  # Style de l'application 
+        │   │   ├── 📄 map.css             # Style de la page de l'application
+        │   │   ├── 📄 style.css           # Style de l'écran de login
+        │   │
+        │   ├── 📄 index.html              # Html du login
+        │   ├── 📄 map.html                # Html de l'application
+        │  
+        ├── 📄 package-lock.json   # Verrouillage des versions des dépendances
+        ├── 📄 package.json        # Dépendances et scripts du projet
+        ├── 📄 README.md           # Instructions pour l’installation
+        ├── 📄 server.js           # Serveur principal Node.js avec WebRTC et Socket.io
+    </div>
+    <p>
+        L'arborescence du projet Share'In est organisée de manière à séparer clairement les différentes responsabilités de l'application. Le dossier <code>node_modules/</code> contient toutes les dépendances nécessaires au bon fonctionnement du projet, comme Express et Socket.io. <br>Le dossier <code>public/</code> regroupe les fichiers accessibles au navigateur, y compris les images, le JavaScript et les fichiers CSS. 
+    </p>
+    <p>
+        Le dossier <code>js/</code> contient les fichiers JavaScript responsables des fonctionnalités principales, telles que la gestion des utilisateurs, la visioconférence et la carte interactive. <br>Le dossier <code>Docs/</code> propose deux fichiers de documentation : l'un pour l'utilisateur final et l'autre pour les développeurs. 
+    </p>
+    <p>
+        Le dossier <code>style/</code> contient les fichiers CSS pour le design visuel, assurant ainsi que chaque partie de l'application soit bien structurée et cohérente. Les fichiers <code>index.html</code> et <code>map.html</code> servent respectivement à l'écran de login et à l'interface de la visioconférence. 
+        <br>Enfin, les fichiers <code>package.json</code> et <code>package-lock.json</code> permettent de gérer les dépendances et les versions des modules Node.js, assurant une installation fiable du projet.
+    </p>
+
+    <h2 id="backend">⚙️ Backend</h2>
+    <p>Le serveur Node.js est responsable de la gestion des connexions et des échanges entre utilisateurs.</p>
+
+    <h3>Extrait du code (serveur Express + Socket.io)</h3>
+    <div class="code-block">
+        const express = require("express");
+        const http = require("http");
+        const { Server } = require("socket.io");
+        const cors = require("cors");
+
+        const app = express();
+        const server = http.createServer(app);
+        const io = new Server(server, {
+            cors: {
+                origin: "*",
+                methods: ["GET", "POST"]
+            }
+        });
+                    ......
+        io.on("connection", (socket) => {
+            console.log(`🔵 Connexion : ${socket.id}`);
+        
+            socket.on("/api/user_joined", (data) => {
+            // Stocker dans les deux structures
+            users[socket.id] = { 
+                id: socket.id, 
+                name: data.name, 
+                latitude: null, 
+                longitude: null,
+                inCall: false
+            };
+            
+            // Stocker ou mettre à jour la référence par nom
+            usersByName[data.name] = socket.id;
+            
+            console.log(`👤 ${data.name} a rejoint la session`);
+            io.emit("/api/users_list", users);
+            io.emit("/api/positions_update", users);
+            });
+
+            socket.on("disconnect", () => {
+                if (users[socket.id]) {
+                  const userName = users[socket.id].name;
+                  delete usersByName[userName];
+                  delete users[socket.id];
+                  io.emit("/api/users_list", users);
+                  io.emit("/api/positions_update", users);
+                  io.emit("/api/user-disconnected", socket.id);
+                }
+              });
+        });         
+    </div>
+    <p>
+        Ce script met en place un serveur de visioconférence en utilisant <code>Express</code>, <code>Socket.io</code> et <code>CORS</code> pour gérer la communication en temps réel entre les utilisateurs.
+    </p>
+
+    <h3>Principaux composants :</h3>
+    <ul>
+        <li><strong>Initialisation :</strong> Le serveur Express est créé avec <code>http.createServer(app)</code> et intègre <code>Socket.io</code>.</li>
+        <li><strong>Gestion du CORS :</strong> Le serveur accepte les connexions depuis n'importe quelle origine (<code>origin: "*"</code>) et prend en charge les requêtes <code>GET</code> et <code>POST</code>.</li>
+    </ul>
+
+    <h3>Gestion des connexions utilisateur</h3>
+    <p>
+        À chaque connexion d'un utilisateur, un identifiant unique est généré et stocké. Le serveur écoute plusieurs événements pour gérer les utilisateurs :
+    </p>
+
+    <ul>
+        <li>
+            <code>/api/user_joined</code> : Enregistre un nouvel utilisateur avec son <strong>nom</strong> et son <strong>ID de session</strong>.
+        </li>
+        <li>
+            <code>/api/users_list</code> : Diffuse la liste des utilisateurs connectés à tous les clients.
+        </li>
+        <li>
+            <code>/api/positions_update</code> : Met à jour les positions des utilisateurs sur la carte interactive.
+        </li>
+        <li>
+            <code>disconnect</code> : Supprime l'utilisateur lorsqu'il quitte l'application et informe les autres participants.
+        </li>
+    </ul>
+    <p>
+        Ce système assure une communication fluide entre les utilisateurs en temps réel, permettant la mise à jour des connexions et de la carte interactive sans recharger la page.
+    </p>
+    <h2 id="frontend">🎨 Frontend</h2>
+    <p>Le frontend utilise **JavaScript** pour gérer l'interface utilisateur de manière dynamique.</p>
+
+    <h3>Gestion de la vidéo et des appels</h3>
+    <div class="code-block">
+        function createVideoElement(userId, userName) {
+            // Vérifier si l'élément existe déjà
+            const existingContainer = document.getElementById(`container-${userId}`);
+            if (existingContainer) {
+                return existingContainer.querySelector('video');
+            }
+        
+            const remoteVideo = document.createElement('video');
+            remoteVideo.id = `remote-${userId}`;
+            remoteVideo.autoplay = true;
+            remoteVideo.playsinline = true;
+            
+            const videoContainer = document.createElement('div');
+            videoContainer.className = 'remote-video-container';
+            videoContainer.display = 'inline-block';
+        
+            videoContainer.id = `container-${userId}`;
+            
+            const nameLabel = document.createElement('div');
+            nameLabel.className = 'name-label';
+            nameLabel.textContent = userName;
+            
+            videoContainer.appendChild(remoteVideo);
+            videoContainer.appendChild(nameLabel);
+            document.getElementById('remoteVideos').appendChild(videoContainer);
+            
+            return remoteVideo;
+        }
+    </div>
+    <p>
+        Cette fonction permet de créer dynamiquement un élément vidéo pour afficher le flux d’un utilisateur lors d'un appel vidéo.
+    </p>
+    <h3>Étapes du processus :</h3>
+    <ul>
+        <li><strong>Vérification préalable :</strong> Vérifie si une vidéo existe déjà pour l’utilisateur (<code>userId</code>). Si oui, elle est réutilisée.</li>
+        <li><strong>Création de l'élément vidéo :</strong> Un élément <code>&lt;video&gt;</code> est généré avec les attributs <code>autoplay</code> et <code>playsinline</code> pour un affichage fluide.</li>
+        <li><strong>Encapsulation dans un conteneur :</strong> Un <code>&lt;div&gt;</code> est créé pour regrouper la vidéo et un label affichant le nom de l'utilisateur.</li>
+        <li><strong>Ajout au DOM :</strong> Le conteneur est ajouté à l’élément <code>#remoteVideos</code>, qui affiche les flux des participants.</li>
+    </ul>
+    <p>
+        Grâce à cette approche, chaque utilisateur a son propre espace vidéo sans duplication, améliorant ainsi la gestion des flux vidéo en conférence.
+    </p>
+
+    <h2 id="communication">🔄 Communication Temps Réel</h2>
+    <p>Share'In utilise **WebRTC** et **Socket.io** pour les échanges entre utilisateurs.</p>
+
+    <h3>Signalisation WebRTC</h3>
+    <p>WebRTC est utilisé pour établir des connexions pair-à-pair :</p>
+    <div class="code-block">
+        socket.on('/api/user-connected', async ({ userId, userName }) => {
+            console.log(`${userName} a rejoint l'appel`);
+            
+            // Vérifier si une connexion existe déjà pour cet utilisateur
+            if (peers[userId]) {
+                console.log('Connection existante trouvée, nettoyage...');
+                peers[userId].close();
+                delete peers[userId];
+            }
+            
+            const peerConnection = new RTCPeerConnection(configuration);
+            peers[userId] = peerConnection;
+            
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
+            
+            peerConnection.onicecandidate = event => {
+                if (event.candidate) {
+                    socket.emit('/api/ice-candidate', {
+                        target: userId,
+                        candidate: event.candidate
+                    });
+                }
+            };
+            
+            peerConnection.ontrack = event => {
+                const video = createVideoElement(userId, userName);
+                video.srcObject = event.streams[0];
+            };
+            
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            
+            socket.emit('/api/offer', {
+                target: userId,
+                offer: offer
+            });
+        });
+    </div>
+    <p>
+        Le code gère la connexion d'un nouvel utilisateur à l'appel en utilisant WebRTC. Lorsqu'un utilisateur se connecte, un événement <code>'/api/user-connected'</code> est émis. L'application vérifie d'abord si une connexion existante existe déjà pour cet utilisateur. Si oui, elle la ferme pour éviter les doublons.
+    </p>
+    <p>
+        Ensuite, une nouvelle instance de <code>RTCPeerConnection</code> est créée pour établir la connexion WebRTC avec l'utilisateur. La connexion locale est ensuite ajoutée à cette instance, en envoyant chaque flux (comme la vidéo et l'audio) à l'utilisateur distant. Les événements de type <code>onicecandidate</code> et <code>ontrack</code> gèrent respectivement l'échange de candidats ICE (pour la traversée des pare-feux) et l'affichage du flux vidéo distant.
+    </p>
+    <p>
+        Après la configuration de la connexion, une offre WebRTC est créée, signée et envoyée à l'utilisateur distant via un événement <code>'/api/offer'</code>, démarrant ainsi la négociation de la connexion entre les deux utilisateurs.
+    </p>
+    
+
+    <h3>Messagerie instanée</h3>
+    <p>La messagerie instanée se base sur le système de socket pour la gestion du back:</p>
+    <div class="code-block">
+        socket.on("/api/private_message", ({ to, from, message, toName }) => {
+            // Récupérer l'ID socket actuel du destinataire par son nom
+            const currentToId = usersByName[toName];
+            
+            if (users[from] && currentToId) {
+                const conversationId = getConversationId(users[from].name, toName);
+                
+                if (!messageHistory[conversationId]) {
+                    messageHistory[conversationId] = [];
+                }
+                
+                const messageData = {
+                    from: from,
+                    fromName: users[from].name,
+                    message: message,
+                    timestamp: Date.now()
+                };
+                messageHistory[conversationId].push(messageData);
+                io.to(currentToId).emit("/api/private_message", {
+                    from: users[from].name,
+                    message: message,
+                    timestamp: messageData.timestamp
+                });
+                
+                io.to(from).emit("/api/message_sent", {
+                    to: toName,
+                    message: message,
+                    timestamp: messageData.timestamp
+                });
+            }
+          });
+    </div>
+    <p>
+        Le code gère l'envoi de messages privés entre utilisateurs via un événement <code>'/api/private_message'</code>. Lorsqu'un utilisateur envoie un message privé, l'ID de l'utilisateur destinataire est récupéré par son nom grâce à <code>usersByName</code>.
+    </p>
+    <p>
+        Si l'utilisateur expéditeur et le destinataire sont valides, une conversation est identifiée (ou créée si elle n'existe pas) en fonction des noms des deux utilisateurs. L'historique des messages pour cette conversation est mis à jour, et chaque message est ajouté à cet historique.
+    </p>
+    <p>
+        Le message est ensuite envoyé à l'utilisateur destinataire via un événement <code>'/api/private_message'</code>, contenant le nom de l'expéditeur, le message et un horodatage. Enfin, un événement <code>'/api/message_sent'</code> est émis à l'expéditeur pour lui confirmer que son message a bien été envoyé.
+    </p>
+    
+    <h3>JavaScript pour la gestion du Front:</h3>
+    <div class="code-block">
+        function addMessageToChat(message, isSent, timestamp = new Date()) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageContainer = document.createElement('div');
+            messageContainer.className = `message-container ${isSent ? 'sent' : 'received'}`;
+        
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message';
+            messageElement.textContent = message;
+        
+            const timeElement = document.createElement('div');
+            timeElement.className = 'message-time';
+            timeElement.textContent = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+            messageContainer.appendChild(messageElement);
+            messageContainer.appendChild(timeElement);
+            chatMessages.appendChild(messageContainer);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </div>
+    <p>
+        La fonction <code>addMessageToChat</code> permet d'ajouter un message dans le chat. Elle prend en paramètres le message à afficher, un indicateur pour savoir si le message a été envoyé par l'utilisateur actuel (<code>isSent</code>), et un horodatage facultatif (<code>timestamp</code>).
+    </p>
+    <p>
+        Un nouveau <code>div</code> est créé pour chaque message. La classe CSS du conteneur du message est définie en fonction de l'indicateur <code>isSent</code>, ce qui permet de différencier les messages envoyés de ceux reçus. 
+    </p>
+    <p>
+        Un autre <code>div</code> est ajouté pour afficher le texte du message. Enfin, un troisième <code>div</code> est créé pour afficher l'heure du message au format de l'heure locale.
+    </p>
+    <p>
+        Ces éléments sont ajoutés au conteneur principal du chat, et le conteneur est automatiquement défilé vers le bas pour afficher le dernier message.
+    </p>
+    
+
+    <h2 id="geolocalisation">📍 Géolocalisation</h2>
+    <p>Leaflet.js est utilisé pour afficher la position des utilisateurs.</p>
+
+    <h3>Afficher la carte interactive</h3>
+    <div class="code-block">
+        function initMap(latu,lngu) {
+            try {
+              // Initialiser la carte Leaflet
+              this.map = L.map('map').setView([latu, lngu], 13);
+              // Ajouter une couche de tuiles (OpenStreetMap)
+              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: "https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(this.map);
+               const marker = L.marker([latu, lngu]).addTo(this.map);
+               marker.bindPopup(`Vous Position:Latitude: ${latu}Longitude: ${lngu}`).openPopup();
+              
+            } catch (error) {
+              console.error('Erreur Leaflet:', error);
+              throw error;
+            }
+          }
+    </div>
+    <p>
+        La fonction <code>initMap</code> est utilisée pour initialiser une carte interactive avec la bibliothèque Leaflet. Elle prend en paramètres les coordonnées de latitude (<code>latu</code>) et de longitude (<code>lngu</code>) de l'utilisateur.
+    </p>
+    <p>
+        La carte est d'abord initialisée avec un centre à la position fournie et un niveau de zoom de 13. Ensuite, une couche de tuiles OpenStreetMap est ajoutée à la carte pour afficher le fond de carte.
+    </p>
+    <p>
+        Un marqueur est ensuite placé à la position de l'utilisateur, et une fenêtre contextuelle est liée au marqueur pour afficher les coordonnées de latitude et de longitude de l'utilisateur sous forme de message.
+    </p>
+    <p>
+        En cas d'erreur lors de l'initialisation de la carte (par exemple, si les coordonnées sont incorrectes ou la bibliothèque Leaflet n'est pas chargée correctement), un message d'erreur est affiché dans la console.
+    </p>
+    
+
+    <h3>Réception des positions et mises à jour depuis le serveur</h3>
+    <div class="code-block">
+        socket.on("/api/positions_update", (users) => {
+            const displayedMarkers = new Set();
+        
+            Object.keys(users).forEach((id) => {
+                const { latitude, longitude, name } = users[id];
+                if (!latitude || !longitude || isNaN(latitude) || isNaN(longitude)) {
+                    console.warn(`⚠️ Coordonnées invalides pour ${name || 
+                        `Utilisateur ${id}`}:`, latitude, longitude);
+                    return;
+                }
+                if (id === userId) return;
+                if (!displayedMarkers.has(id)) {
+                    const marker = L.marker([latitude, longitude]).addTo(this.map);
+                    if (name===username){
+                        marker.bindPopup(`Vous Position: Latitude: ${latitude} Longitude: ${longitude}`)
+                        .openPopup();
+                    }
+                    else{
+                        marker.bindPopup(`${name} Position: Latitude: ${latitude} Longitude: ${longitude}`)
+                        .openPopup();
+                    }
+                    displayedMarkers.add(id); 
+                }
+            });
+            
+        });
+    </div>
+    <p>
+        La fonction <code>socket.on("/api/positions_update", ...)</code> est utilisée pour recevoir les mises à jour des positions des utilisateurs connectés. Chaque fois qu'un utilisateur met à jour sa position, cette fonction est appelée pour afficher les nouveaux marqueurs sur la carte.
+    </p>
+    <p>
+        Un <code>Set</code> nommé <code>displayedMarkers</code> est utilisé pour suivre les marqueurs déjà affichés sur la carte afin d'éviter d'afficher plusieurs fois un même marqueur pour un même utilisateur.
+    </p>
+    <p>
+        Pour chaque utilisateur dans l'objet <code>users</code>, la fonction vérifie que les coordonnées de latitude et de longitude sont valides. Si les coordonnées sont invalides, un message d'avertissement est affiché dans la console. Si l'utilisateur est celui qui a envoyé la demande de mise à jour (le <code>userId</code>), ses propres coordonnées ne sont pas affichées de nouveau.
+    </p>
+    <p>
+        Si l'utilisateur n'est pas celui en cours, et si le marqueur n'a pas encore été affiché, un nouveau marqueur est ajouté à la carte à la position indiquée par les coordonnées latitude et longitude de l'utilisateur. Si le nom de l'utilisateur correspond au nom de l'utilisateur connecté (identifié par <code>username</code>), la fenêtre contextuelle affiche "Vous" pour indiquer que c'est votre propre position. Sinon, la fenêtre contextuelle affiche le nom de l'utilisateur et ses coordonnées.
+    </p>
+    <p>
+        Cette fonctionnalité permet de mettre à jour et de suivre en temps réel les positions des utilisateurs sur la carte, en évitant d'afficher plusieurs fois le même marqueur pour un même utilisateur.
+    </p>
+    <h3>Récupération de la postion de l'utilisateur</h3>
+    <div class="code-block">
+        function getUserPosition() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        console.log(lat);
+                        console.log(lng);
+                        initMap(lat,lng);
+                        updateUserPosition(lat, lng);
+                        updateMap(lat, lng);
+                        hideLoading();
+                    },
+                    (error) => {
+                        console.error("❌ Erreur de géolocalisation :", error);
+                        if (error.code === 1) {
+                            alert("⚠️ Vous avez refusé l'accès à la géolocalisation. Activez-la dans les 
+                            paramètres de votre navigateur.");
+                        } else if (error.code === 2) {
+                            alert("❌ Impossible d'obtenir votre position. Vérifiez votre connexion GPS.");
+                        } else if (error.code === 3) {
+                            setTimeout(getUserPosition, 1);
+                        }
+                    },
+                    {
+                        timeout: 20000,
+                        maximumAge: 5000 
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            } else {
+                alert("Géolocalisation non supportée par votre navigateur.");
+            }
+        }
+    </div>
+    <p>
+        La fonction <code>getUserPosition()</code> permet d'obtenir la position géographique actuelle de l'utilisateur en utilisant l'API de géolocalisation du navigateur. Cette fonction vérifie d'abord si la géolocalisation est disponible dans le navigateur, grâce à la propriété <code>navigator.geolocation</code>.
+    </p>
+    <p>
+        Si la géolocalisation est disponible, la méthode <code>getCurrentPosition()</code> est appelée pour obtenir la position de l'utilisateur. Cette méthode prend en charge deux paramètres de rappel : un pour la réussite et un pour l'échec.
+    </p>
+    <p>
+        - En cas de succès, la fonction récupère les coordonnées de latitude et de longitude de la position de l'utilisateur via <code>position.coords.latitude</code> et <code>position.coords.longitude</code>. Elle affiche ces coordonnées dans la console, puis elle appelle plusieurs autres fonctions pour initialiser la carte, mettre à jour la position de l'utilisateur et masquer l'interface de chargement (<code>hideLoading()</code>).
+    </p>
+    <p>
+        - En cas d'échec, le callback d'erreur gère différentes situations :
+        <ul>
+            <li><strong>Erreur code 1 :</strong> Si l'utilisateur a refusé l'accès à la géolocalisation, un message l'avertit d'activer cette fonctionnalité dans les paramètres du navigateur.</li>
+            <li><strong>Erreur code 2 :</strong> Si le navigateur ne peut pas obtenir la position de l'utilisateur, cela peut être dû à une mauvaise connexion GPS.</li>
+            <li><strong>Erreur code 3 :</strong> Si l'appel échoue après un certain délai, la fonction tente de récupérer à nouveau la position après un délai très court (1 milliseconde) soit quasiment instantanément.</li>
+        </ul>
+    </p>
+    <p>
+        Si la géolocalisation n'est pas supportée par le navigateur, un message d'alerte est affiché pour indiquer à l'utilisateur que cette fonctionnalité n'est pas disponible.
+    </p>
+    
+
+    <a href="index.html" class="btn-back">↩ Retour</a>
+
+</main>
+
+</body>
+</html>
