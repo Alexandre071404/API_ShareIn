@@ -10,8 +10,6 @@ function openChat(user) {
     chatRecipient.textContent = `Chat avec ${user.name}`;
     chatMessages.innerHTML = '';
     chatContainer.style.display = 'flex';
-    
-    // Modifier pour utiliser le nom au lieu de l'ID
     socket.emit("/api/get_message_history", { otherUserName: user.name });
 }
 
@@ -39,8 +37,6 @@ socket.on("/api/message_history", (messages) => {
         const isSent = msg.from === socket.id;
         addMessageToChat(msg.message, isSent, new Date(msg.timestamp));
     });
-    
-    // Scroll vers le bas
     chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
@@ -63,11 +59,9 @@ function sendMessage() {
 
 // Réception des messages privés
 socket.on('/api/private_message', ({ from, message }) => {
-    // Si le chat est ouvert avec l'expéditeur, afficher le message
     if (currentChatPartner && from === currentChatPartner.name) {
         addMessageToChat(message, false);
     } else {
-        // Sinon, afficher une notification
         showNotification(`Nouveau message de ${from}`);
     }
 });
@@ -101,13 +95,9 @@ function showNotification(message) {
     }
 }
 
-// Ajouter dans votre app.js client
 socket.on('/api/user_disconnected_chat', ({ userId, userName }) => {
-    // Si on avait un chat ouvert avec cet utilisateur
     if (currentChatPartner && currentChatPartner.id === userId) {
-        // Afficher un message dans le chat
         addMessageToChat(`${userName} s'est déconnecté(e)`, 'system');
-        // Optionnellement, désactiver la zone de saisie
         document.getElementById('chat-input').disabled = true;
         document.getElementById('send-message').disabled = true;
     }

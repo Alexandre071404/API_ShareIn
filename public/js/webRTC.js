@@ -1,4 +1,3 @@
-// public/webrtc.js
 let localStream;
 let peers = {};
 const configuration = {
@@ -36,7 +35,7 @@ async function initializeCall() {
 }
 
 function createVideoElement(userId, userName) {
-    // Vérifier si l'élément existe déjà
+    // On vérifie si l'élément existe déjà
     const existingContainer = document.getElementById(`container-${userId}`);
     if (existingContainer) {
         return existingContainer.querySelector('video');

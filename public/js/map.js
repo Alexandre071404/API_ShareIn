@@ -70,10 +70,10 @@ function updateMap(lat, lng) {
 
     // Si le marqueur de l'utilisateur existe déjà, on le supprime avant de le recréer
     if (window.userMarker) {
-        window.userMarker.remove(); // Supprimer le marqueur existant
+        window.userMarker.remove(); // On supprime le marqueur existant
     }
 
-    // Créer un nouveau marqueur pour l'utilisateur
+    // On crée un nouveau marqueur pour l'utilisateur
     window.userMarker = L.marker([lat, lng], {
         icon: L.icon({
             iconUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Blue_dot.svg/200px-Blue_dot.svg.png", 
